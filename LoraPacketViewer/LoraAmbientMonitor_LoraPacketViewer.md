@@ -1,6 +1,6 @@
 ﻿# LoraPacketViewer
 
-This Visual Studio C# project is part of the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) and implements a GUI application to display the JSON records sent by the [LoraPacketRecv](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraPacketRecv) subproject either online to the MQTT broker or the log files generated offline. This includes both the bootup and sensor data packets. This GUI application is primarily used for commissioning and diagnostics. It is not required for productive use.
+This Visual Studio C# project is part of the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) and implements a GUI application to display the JSON records sent by the [LoraPacketRecv](../LoraPacketRecv/) subproject either online to the MQTT broker or the log files generated offline. This includes both the bootup and sensor data packets. This GUI application is primarily used for commissioning and diagnostics. It is not required for productive use.
 
 ![\[Project Overview - LoraPacketViewer\]](../Documentation/Project_Overview_LoraPacketViewer.png)
 
@@ -22,13 +22,13 @@ Lists status information and all JSON records (both bootup and sensor data packe
 
 ## Online Mode
 
-In online mode, the *LoraPacketViewer* connects to the MQTT broker and receives from it all JSON records sent by the [LoraPacketRecv](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraPacketRecv) subproject. For this purpose, the two fields *"Host URL"* and *"Host Port"* must be configured according to the IP address and port number of the broker. With the button *"Connect"* the connection to the broker is established. After the connection has been successfully established, the status indicator changes from red to green.
+In online mode, the *LoraPacketViewer* connects to the MQTT broker and receives from it all JSON records sent by the [LoraPacketRecv](../LoraPacketRecv/) subproject. For this purpose, the two fields *"Host URL"* and *"Host Port"* must be configured according to the IP address and port number of the broker. With the button *"Connect"* the connection to the broker is established. After the connection has been successfully established, the status indicator changes from red to green.
 
 By marking the MQTT packets as *"Retain"*, the broker stores the last received message of a topic. This causes the *LoraPacketViewer* to receive its last sent boot record (device configuration) and sensor data record (current environment data) from each sensor module when it logs on to the broker. Thus, *LoraPacketViewer* knows the current state of the overall system immediately after it logs on to the broker.
 
 ## Offline Mode
 
-In offline mode, a file with JSON records is read in and processed via *"File -> Load..."*. The file can either have been previously created by *LoraPacketViewer* itself via *"File -> Save as..."* or it was created by the [LoraPacketRecv](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraPacketRecv) subproject with the command line parameter *"-l=<msg_file>"*.
+In offline mode, a file with JSON records is read in and processed via *"File -> Load..."*. The file can either have been previously created by *LoraPacketViewer* itself via *"File -> Save as..."* or it was created by the [LoraPacketRecv](../LoraPacketRecv/) subproject with the command line parameter *"-l=<msg_file>"*.
 
 ## MQTT Communication
 
