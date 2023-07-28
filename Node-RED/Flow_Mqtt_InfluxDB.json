@@ -1,0 +1,221 @@
+[
+    {
+        "id": "8bc0ee691c78d4fc",
+        "type": "tab",
+        "label": "MQTT -> InfluxDB",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bdc0a3a79fbc9d98",
+        "type": "mqtt in",
+        "z": "8bc0ee691c78d4fc",
+        "name": "",
+        "topic": "LoraAmbMon/Data/+/StData",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "8a9665c4670cd23b",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 300,
+        "wires": [
+            [
+                "1988246fee1f2347",
+                "3bdc22f9cfb8c822"
+            ]
+        ]
+    },
+    {
+        "id": "1988246fee1f2347",
+        "type": "debug",
+        "z": "8bc0ee691c78d4fc",
+        "name": "MqttMsg (StData)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "f42f18c84a515812",
+        "type": "debug",
+        "z": "8bc0ee691c78d4fc",
+        "name": "InfluxDataLine (StData)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "7fe894ab49b63087",
+        "type": "influxdb out",
+        "z": "8bc0ee691c78d4fc",
+        "influxdb": "87a029d7644aa4c4",
+        "name": "",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 830,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3bdc22f9cfb8c822",
+        "type": "function",
+        "z": "8bc0ee691c78d4fc",
+        "name": "Build Influx Data Line (StData)",
+        "func": "\n// Measurement\nvar Measurement = \"StationData\";\n\n// Fields\nvar DevID = msg.payload.DevID;\nvar MsgID = msg.payload.MsgID;\nvar MsgType = msg.payload.MsgType;\nvar TimeStamp = msg.payload.TimeStamp;\nvar TimeStampFmt = msg.payload.TimeStampFmt;\nvar RSSI = msg.payload.RSSI;\nvar SequNum = msg.payload.SequNum;\nvar Uptime = msg.payload.Uptime;\nvar UptimeFmt = msg.payload.UptimeFmt;\nvar Temperature = msg.payload.Temperature;\nvar Humidity = msg.payload.Humidity;\nvar MotionActive = msg.payload.MotionActive;\nvar MotionActiveTime = msg.payload.MotionActiveTime;\nvar MotionActiveCount = msg.payload.MotionActiveCount;\nvar LightLevel = msg.payload.LightLevel;\nvar CarBattLevel = msg.payload.CarBattLevel;\n\n// reduce 'StationDataGen?' to 'Gen?'\nMsgType = MsgType.replace(\"StationData\", \"\");\n\n// convert TimeStamp into NanoSeconds (s->ms->us->ns)\nvar TimeStampNanoSec = TimeStamp * 1000 * 1000 * 1000;\n\n// remove all spaces from TimeStamp string\nTimeStampFmt = TimeStampFmt.split(' ').join('');\n\nvar DataFields = {\n    time: TimeStampNanoSec,\n    [\"DevID\"]: DevID,\n    [\"MsgID\"]: MsgID,\n    [\"MsgType\"]: MsgType,\n    [\"TmStmp\"]: TimeStamp,\n    [\"TmStmpFmt\"]: TimeStampFmt,\n    [\"RSSI\"]: RSSI,\n    [\"SequNum\"]: SequNum,\n    [\"Uptime\"]: Uptime,\n    [\"UptimeFmt\"]: UptimeFmt,\n    [\"Temp\"]: Temperature,\n    [\"Hum\"]: Humidity,\n    [\"MA\"]: MotionActive,\n    [\"MATm\"]: MotionActiveTime,\n    [\"MACnt\"]: MotionActiveCount,\n    [\"LightLev\"]: LightLevel,\n    [\"BatLev\"]: CarBattLevel\n};\n\nmsg.measurement = Measurement;\nmsg.payload = DataFields;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "f42f18c84a515812",
+                "7fe894ab49b63087"
+            ]
+        ]
+    },
+    {
+        "id": "f64db2e850256c07",
+        "type": "mqtt in",
+        "z": "8bc0ee691c78d4fc",
+        "name": "",
+        "topic": "LoraAmbMon/Data/+/Bootup",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "8a9665c4670cd23b",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "47217cb7ce0ffb3d",
+                "956df5ca8ef4e6bf"
+            ]
+        ]
+    },
+    {
+        "id": "47217cb7ce0ffb3d",
+        "type": "function",
+        "z": "8bc0ee691c78d4fc",
+        "name": "Build Influx Data Line (Bootup)",
+        "func": "\n// Measurement\nvar Measurement = \"Bootup\";\n\n// Fields\nvar MsgID = msg.payload.MsgID;\nvar MsgType = msg.payload.MsgType;\nvar TimeStamp = msg.payload.TimeStamp;\nvar TimeStampFmt = msg.payload.TimeStampFmt;\nvar RSSI = msg.payload.RSSI;\nvar DevID = msg.payload.DevID;\nvar FirmwareVer = msg.payload.FirmwareVer;\nvar DataPackCycleTm = msg.payload.DataPackCycleTm;\nvar CfgOledDisplay = msg.payload.CfgOledDisplay;\nvar CfgDhtSensor = msg.payload.CfgDhtSensor;\nvar CfgSr501Sensor = msg.payload.CfgSr501Sensor;\nvar CfgAdcLightSensor = msg.payload.CfgAdcLightSensor;\nvar CfgAdcCarBatAin = msg.payload.CfgAdcCarBatAin;\nvar CfgAsyncLoraEvent = msg.payload.CfgAsyncLoraEvent;\nvar Sr501PauseOnLoraTx = msg.payload.Sr501PauseOnLoraTx;\nvar CommissioningMode = msg.payload.CommissioningMode;\nvar LoraTxPower = msg.payload.LoraTxPower;\nvar LoraSpreadFactor = msg.payload.LoraSpreadFactor;\n\n// reduce 'StationBootup' to 'Bootup?'\nMsgType = MsgType.replace(\"Station\", \"\");\n\n// convert TimeStamp into NanoSeconds (s->ms->us->ns)\nvar TimeStampNanoSec = TimeStamp * 1000 * 1000 * 1000;\n\n// remove all spaces from TimeStamp string\nTimeStampFmt = TimeStampFmt.split(' ').join('');\n\nvar DataFields = {\n    time: TimeStampNanoSec,\n    [\"MsgID\"]: MsgID,\n    [\"MsgType\"]: MsgType,\n    [\"TmStmp\"]: TimeStamp,\n    [\"TmStmpFmt\"]: TimeStampFmt,\n    [\"RSSI\"]: RSSI,\n    [\"DevID\"]: DevID,\n    [\"FwVer\"]: FirmwareVer,\n    [\"CycleTime\"]: DataPackCycleTm,\n    [\"OLED\"]: CfgOledDisplay,\n    [\"DHT\"]: CfgDhtSensor,\n    [\"SR501\"]: CfgSr501Sensor,\n    [\"Light\"]: CfgAdcLightSensor,\n    [\"CarBatt\"]: CfgAdcCarBatAin,\n    [\"AsynEv\"]: CfgAsyncLoraEvent,\n    [\"SR501P\"]: Sr501PauseOnLoraTx,\n    [\"CommM\"]: CommissioningMode,\n    [\"TxPwr\"]: LoraTxPower,\n    [\"SF\"]: LoraSpreadFactor\n};\n\nmsg.measurement = Measurement;\nmsg.payload = DataFields;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 180,
+        "wires": [
+            [
+                "7fe894ab49b63087",
+                "d0d99129770141c7"
+            ]
+        ]
+    },
+    {
+        "id": "956df5ca8ef4e6bf",
+        "type": "debug",
+        "z": "8bc0ee691c78d4fc",
+        "name": "MqttMsg (Bootup)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "d0d99129770141c7",
+        "type": "debug",
+        "z": "8bc0ee691c78d4fc",
+        "name": "InfluxDataLine (Bootup)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "8a9665c4670cd23b",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.42.157",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "87a029d7644aa4c4",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "LoraAmbMon",
+        "name": "LoraAmbMon",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "http://localhost:8086",
+        "rejectUnauthorized": true
+    }
+]
