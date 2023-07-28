@@ -20,7 +20,7 @@ The *LoraAmbientMonitor* project includes the following components:
 **LoraAmbientMonitor**
 - ESP32 based board with sensors to collect environmental data (temperature, humidity, motion detector, ambient brightness, voltage of the car start battery)
 - Hardware: see project [LoRaAmbientMonitor_PCB](https://github.com/ronaldsieber/LoRaAmbientMonitor_PCB)
-- Software: Embedded C++ Arduino project in the directory [LoRaAmbientMonitor](LoRaAmbientMonitor)
+- Software: Embedded C++ Arduino project in the directory [LoraAmbientMonitor](./LoraAmbientMonitor/)
 
 ![\[LoraAmbientMonitor\]](Documentation/LoraAmbientMonitor_small.png)
 
@@ -28,7 +28,7 @@ The *LoraAmbientMonitor* project includes the following components:
 - RaspberryPi based board with LoRa GPS HAT.
 - Gateway that receives LoRa packets sent by one or more *LoraAmbientMonitor* sensor modules, decodes their payload and publishes the data as JSON record via MQTT to a central broker
 - Software: C++ RaspberryPi/Linux project in the directory 
-[LoraPacketRevc](LoraPacketRevc)
+[LoraPacketRecv](./LoraPacketRecv/)
 
 ![\[LoraPacketRecv\]](Documentation/LoraPacketRecv_small.png)
 
@@ -36,7 +36,7 @@ The *LoraAmbientMonitor* project includes the following components:
 - Windows/GUI application to observe the environment data transmitted by one or more *LoraAmbientMonitor*, especially for commissioning and diagnostics.
 - Receives the JSON records transmitted from LoraPacketRecv to the broker via MQTT Subscribe.
 - Software: C#/.NET WindowsForm project in the directory 
-[LoraPacketViewer](LoraPacketViewer)
+[LoraPacketViewer](./LoraPacketViewer/)
 
 ![\[LoraPacketViewer\]](Documentation/LoraPacketViewer_small.png)
 
@@ -60,7 +60,7 @@ The antennas used also have a high influence on the achievable quality of the ra
 
 The stick antennas supplied with the Heltec ESP32 Kit (Sensor Module) and the LORA PI HAT (Receiver) are only suitable for bridging short distances. To increase the range, it is better to use an external antenna (6dBi or better) on both sides with coaxial cable in productive use.
 
-The configuration parameters relevant for LoRa transmission are defined on the transmitter side in [LoRaAmbientMonitor.ino](LoRaAmbientMonitor/LoRaAmbientMonitor.ino):
+The configuration parameters relevant for LoRa transmission are defined on the transmitter side in [LoraAmbientMonitor.ino](LoraAmbientMonitor/LoraAmbientMonitor/LoraAmbientMonitor.ino):
 
 - **Spreading Factor** (`LORA_SPREADING_FACTOR`)
 The spreading factor is a measure that indicates in how many individual steps (chips) a data symbol is transmitted. With a small spreading factor, the data symbols are encoded with few chips, which ultimately leads to a short transmission time of a data packet over-the-air. This reduces the probability that the data packet will be disturbed by external influences during transmission. Conversely, a large spreading factor causes a data symbol to be encoded with a high number of chips and thus stretched out in time. As a result, each data symbol is transmitted with a higher energy density, which in turn leads to increased interference immunity due to a better signal-to-noise ratio. In general, a higher spreading factor results in a longer range, but also in a higher probability of interference due to the longer over-the-air transmission time. Since the two aspects influence each other in opposite directions, it can be useful in the case of frequent transmission errors to determine the optimum value for the respective local conditions empirically.
@@ -83,7 +83,7 @@ To be able to detect packet losses on the receiver side, each LoRa sensor data p
 
 A LoRa packet has a payload length of 40 bytes. It consists of a packet header and the above-mentioned 3 generations of sensor data records (Gen0/Gen1/Gen2). Each of these four elements is secured with its own 16Bit CRC of type `uint16_t` and has a length of 10 bytes. To decode a sensor data record, the CRC of the header and the CRC of the respective sensor data record (Gen0, Gen1 or Gen2) must be intact. This segmentation allows individual sensor record sets to be extracted from a LoRa packet even if the packet has partial transmission defects. This increases resilience to interference on the radio link. The detailed design of a complete LoRa packet is described in [LoRa_Payload_Design.pdf](Documentation/LoRa_Payload_Design.pdf).
 
-The *LoraAmbientMonitor* project is designed to collect and transmit environmental data in parallel from up to 16 sensor modules. If several modules transmit at the same time, this leads to collisions on the radio link and thus usually to the loss of the data packets. Since a uniform firmware version is typically used for all devices, all devices also use the same transmission time regime based on the time constants `LORA_PACKET_INHIBIT_TIME`, `LORA_PACKET_FIRST_TIME` and `LORA_PACKET_CYCLE_TIME` (all defined in [LoRaAmbientMonitor.ino](LoRaAmbientMonitor/LoRaAmbientMonitor.ino)). To prevent the identical configuration from leading to permanent, systematic transmission collisions, the respective transmission time is varied by a random value in the range +/- 5%.
+The *LoraAmbientMonitor* project is designed to collect and transmit environmental data in parallel from up to 16 sensor modules. If several modules transmit at the same time, this leads to collisions on the radio link and thus usually to the loss of the data packets. Since a uniform firmware version is typically used for all devices, all devices also use the same transmission time regime based on the time constants `LORA_PACKET_INHIBIT_TIME`, `LORA_PACKET_FIRST_TIME` and `LORA_PACKET_CYCLE_TIME` (all defined in [LoraAmbientMonitor.ino](LoraAmbientMonitor/LoraAmbientMonitor/LoraAmbientMonitor.ino)). To prevent the identical configuration from leading to permanent, systematic transmission collisions, the respective transmission time is varied by a random value in the range +/- 5%.
 
 In sum, the overall result of the constants described here must satisfy the regulatory requirements for the duty cycle for use of the 868 MHz band. Here it is specified that a transmitter may only occupy the frequency band for a maximum of 1% of the time in order not to interfere with cooperative use by other subscribers. This means that the *LoraAmbientMonitor* may only use the radio channel for a maximum of 36 seconds per hour. As discussed, both transmit parameters and payload length have a significant impact on the time required for over-the-air transmission of the LoRa packet. This can be determined based on the individual parameters using the *"LoRa Air time calculator"*: https://loratools.nl/#/airtime.
 
@@ -158,7 +158,7 @@ For productive use, one or more *LoraAmbientMonitor* sensor modules and a Raspbe
 When using multiple *LoraAmbientMonitor* sensor modules, make sure that an individual Node or DevID is configured for each module at DIP switches DIP3/4. DIP2 optionally ensures that the motion detector is ignored during the transmission of the LoRa packets in order to suppress false triggering due to interference from the LoRa transmitter. DIP1 can be used to control whether, in addition to the cyclic LoRa packets, asynchronous packets are also sent in the case of special events such as triggering the motion detector or connecting or disconnecting the car start battery.
 
 - LoraPacketRecv Gateway:
-The gateway software should be started automatically when booting the RasperryPi to ensure high availability. The scripts contained in the subdirectory *"Autostart"* are responsible for the start/stop handling. The *"LoraPacketRecv"* script is used to configure the autostart of the gateway software. Details are described in the section *"Autostart for LoraPacketRecv"* in the [LoraAmbientMonitor_LoraPacketRecv.md](Documentation/LoraAmbientMonitor_LoraPacketRecv-md) documentation.
+The gateway software should be started automatically when booting the RasperryPi to ensure high availability. The scripts contained in the subdirectory *"Autostart"* are responsible for the start/stop handling. The *"LoraPacketRecv"* script is used to configure the autostart of the gateway software. Details are described in the section *"Autostart for LoraPacketRecv"* in the [LoraAmbientMonitor_LoraPacketRecv.md](LoraPacketRecv/LoraAmbientMonitor_LoraPacketRecv.md) documentation.
 
 By providing the sensor data packet in the form of JSON records via MQTT, a variety of further processing and analysis is possible with numerous free software packages. For example, the *"Eclipse Mosquitto MQTT Broker"* can be installed directly on the same RaspberryPi as the *LoraPacketRecv* gateway. Further software packages for further processing and evaluation are *Node-RED*, *InfluxDB* and *Grafana*. It is irrelevant whether the packages also run on the RaspberryPi of the *LoraPacketRecv* Gateway or on different systems.
 
