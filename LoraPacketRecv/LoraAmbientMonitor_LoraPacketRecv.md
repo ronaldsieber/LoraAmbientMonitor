@@ -1,6 +1,6 @@
 ﻿# LoraPacketRecv
 
-This Linux project is part of the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) and contains the RaspberryPi console application for the receiver device. This gateway software receives the LoRa packets sent by one or more sensor devices described in the [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraAmbientMonitor) subproject, decodes the payload, and publishes the data as a JSON record via MQTT to a superordinate broker. To receive the LoRa data, the SEEED LORA/GPS RASPBERRY PI HAT is required.
+This Linux project is part of the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) and contains the RaspberryPi console application for the receiver device. This gateway software receives the LoRa packets sent by one or more sensor devices described in the [LoraAmbientMonitor](../LoraAmbientMonitor/) subproject, decodes the payload, and publishes the data as a JSON record via MQTT to a superordinate broker. To receive the LoRa data, the SEEED LORA/GPS RASPBERRY PI HAT is required.
 
 The stick antenna included with the LORA PI HAT is well suited for development and short distances due to its compact and space-saving design. To increase the range, it is better to use an external antenna (6dBi or better) with coaxial cable in productive use.
 
@@ -16,7 +16,7 @@ The *LoraPacketRecv* software requires root privileges to access the hardware. I
 Host URL of the MQTT broker in the format *URL[:Port]*.
 
 ***-l=<msg_file>***
-Logging of all JSON records sent to the MQTT broker to the specified file (the log file is always opened in APPEND mode). The log file can later be displayed and evaluated using the GUI application implemented in the [LoraPacketViewer](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraPacketViewer) subproject
+Logging of all JSON records sent to the MQTT broker to the specified file (the log file is always opened in APPEND mode). The log file can later be displayed and evaluated using the GUI application implemented in the [LoraPacketViewer](../LoraPacketViewer/) subproject
 
 ***-a***
 Forwarding of JSON records for all received LoRa packets to the MQTT broker, including any duplicates (Gen0/Gen1/Gen2)
@@ -120,7 +120,7 @@ For publishing messages to the MQTT broker the following topics are defined in *
 
 Separate topics are used for publishing bootup and sensor data packets respectively (`MQTT_TOPIC_TMPL_BOOTUP` and `MQTT_TOPIC_TMPL_ST_DATA`). The function `BuildMqttPublishTopic()` individualizes the topic for each sensor module by inserting the DevID (the node number set at the DIP switch). In addition, the MQTT publishing is done with the *"Retain"* flag, so that the broker saves the last received message of a topic in each case.
 
-This has the effect that a client such as [LoraPacketViewer](https://github.com/ronaldsieber/LoraAmbientMonitor/LoraPacketViewer) belonging to the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) receives its last sent bootup record (`MQTT_TOPIC_TMPL_BOOTUP` = device configuration) and sensor data record (`MQTT_TOPIC_TMPL_ST_DATA` = current station environment data) from each sensor module when it connects to the broker. The client thus knows the current state of the overall system immediately after connecting to the broker.
+This has the effect that a client such as [LoraPacketViewer](../LoraPacketViewer/) belonging to the main project [LoraAmbientMonitor](https://github.com/ronaldsieber/LoraAmbientMonitor) receives its last sent bootup record (`MQTT_TOPIC_TMPL_BOOTUP` = device configuration) and sensor data record (`MQTT_TOPIC_TMPL_ST_DATA` = current station environment data) from each sensor module when it connects to the broker. The client thus knows the current state of the overall system immediately after connecting to the broker.
 
 When *LoraPacketRecv* is started with the command line parameter *"-t"*, compact telemetry messages with the topic `MQTT_TOPIC_TELEMETRY` are published to the MQTT broker in addition to the JSON records. These contain the following information as ASCII string:
 - Receive timestamp
