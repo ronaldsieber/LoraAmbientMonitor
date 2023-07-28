@@ -1,0 +1,8 @@
+
+The files in this directory are a copy from the project "Paho MQTT C client library for embedded systems", copyright by Eclipse Foundation, Inc. and its licensors.
+
+The complete original project, possibly also with updates is available here:
+
+https://github.com/eclipse/paho.mqtt.embedded-c
+
+

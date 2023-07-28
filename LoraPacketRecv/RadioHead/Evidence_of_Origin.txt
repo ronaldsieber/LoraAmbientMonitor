@@ -1,0 +1,10 @@
+
+The files in this directory are a copy from the project "RadioHead Packet Radio library for embedded microprocessors", copyright by Mike McCauley.
+
+Here, however, only the files necessary for this application were taken over as a subset. The original project is much more extensive.
+
+The complete original project, possibly also with updates is available here:
+
+https://github.com/idreamsi/RadioHead
+
+

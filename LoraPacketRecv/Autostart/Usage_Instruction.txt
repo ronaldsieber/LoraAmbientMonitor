@@ -1,0 +1,19 @@
+
+* Set execution rights for all scripts *
+
+    cd /home/pi/LoraPacketRecv/Autostart
+    chmod +x LoraPacketRecv
+    chmod +x Start_LoraPacketRecv.sh
+    chmod +x Stop_LoraPacketRecv.sh
+
+
+
+* Register Start/Stop Script for Linux Init Process *
+
+    cd home/pi/LoraPacketRecv/Autostart
+    chmod +x LoraPacketRecv
+    sudo cp ./LoraPacketRecv /etc/init.d/
+    cd /etc/init.d
+    sudo update-rc.d LoraPacketRecv defaults
+
+

@@ -1,0 +1,35 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:           LoraPacketRecv
+# Required-Start: $syslog
+# Required-Stop: $syslog
+# Default-Start:      2 3 4 5
+# Default-Stop:       0 1 6
+# Short-Description:  Start & Stop LoraPacketRecv
+# Description:        Start & Stop LoraPacketRecv
+### END INIT INFO
+
+
+case "$1" in
+  start)
+    if [ -f /home/pi/LoraPacketRecv/Autostart/Start_LoraPacketRecv.sh ]
+    then
+        sudo /home/pi/LoraPacketRecv/Autostart/Start_LoraPacketRecv.sh &
+    fi
+    ;;
+  stop)
+    if [ -f /home/pi/LoraPacketRecv/Autostart/Stop_LoraPacketRecv.sh ]
+    then
+        sudo /home/pi/LoraPacketRecv/Autostart/Stop_LoraPacketRecv.sh &
+    fi
+    ;;
+  reload|restart|force-reload|status)
+    ;;
+  *)
+    echo "Usage: {start|stop|restart|force-reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0
